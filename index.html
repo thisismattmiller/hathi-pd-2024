@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html>
+	<head>
+
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+		<style>
+
+			body{
+				background: #f7f7f7;
+				color:#232323;
+			}
+
+
+
+			a{
+					text-decoration: underline;
+
+				color: hsl(0, 0%, 4%) !important;
+			}
+			
+			.title-container img{
+				border-radius: 5px;
+				object-fit: fill;
+			}
+			.title-container img:hover{
+				transform: scale(1.5);
+			    transition: .5s ease-in-out;
+
+
+			}
+			.title-container{
+				margin-bottom: 0.1em;
+			}
+
+			.meta-label{
+				margin-right: 0.5em;
+			}
+
+			.meta-author{
+				margin-bottom: 1em;
+			}
+
+			.meta-link{
+				margin-right: 0.25em;
+			}
+
+			.button-not-active{
+				border-color: black !important;
+			}
+
+			.bookcover-container{
+
+			}
+			.facet-list{
+			  columns: 4;
+			  -webkit-columns: 4;
+			  -moz-columns: 4;
+
+			}
+			.facet-link{
+				color: #3850b7 !important;
+				text-decoration: none;
+			}
+			.facet-link:hover{
+				background: #eff1fa;
+			}
+
+			details{
+				cursor: pointer;
+			}
+			
+			@media (prefers-color-scheme: dark) {
+/*			  img {
+			    opacity: .75;
+			    transition: opacity .5s ease-in-out;
+			  }
+			  img:hover {
+			    opacity: 1;
+			  }*/
+
+
+				body{
+					background: #232323;
+					color:#f7f7f7;
+				}
+				a{
+					text-decoration: underline;
+					color: hsl(99, 99%, 99%) !important;
+				}
+				.button-not-active{
+					border-color: #f7f7f7 !important;
+				}
+
+				.lcc-link{
+					color: #232323 !important;
+				}
+
+				.facet-link{
+					color: #eff1fa !important;
+					text-decoration: none;
+				}
+				.facet-link:hover{
+					background: #3850b7;
+				}
+			}
+
+
+			@media only screen and (max-width: 767px) {
+			    /* phones */
+			    .bookcover-container{
+			    	text-align: center;
+			    }
+			}
+
+		</style>
+	</head>
+
+
+
+	<body>
+		
+
+
+
+
+
+
+		<div id="app">
+
+
+
+			<div class="container">
+
+				<h1 class="is-size-2">HathiTrust Public Domain 1928 / 2024</h1>
+				<p>
+					Below you find titles housed at HathiTrust that were published in 1928 and now have full view access available in the US. <a  target="_blank" href="https://babel.hathitrust.org/cgi/ls?a=srchls;c=260456364;q1=*">The data comes from this collection</a>. The titles are sorted by popularity, meaning the works at the top and in descending order are the ones mostly widely held by the most institutions, according to Worldcat.
+					By <a href="https://thisismattmiller.com" target="_blank">Matt Miller</a>
+				</p>
+				<div class="mt-2 mb-2 ml-3">
+				<details>
+					<summary>Why do I see some titles that were already in the public domain?</summary>
+					<p class="mt-1 mb-1 ml-2">You see titles like Moby Dick in this list, which have long entered the public domain, because an edition or translation of the work was published in 1928. HathiTrust works on volumes so if a new publication of an old work happened in 1928 it will show up in this list.</p>
+				</details>	
+				<details>
+					<summary>Why two lists?</summary>
+					<p class="mt-1 mb-1 ml-2">The 2000 top literature list is an attempt to filter down to mostly widely held novels and other fiction, not things like government or institution reports  that are widely held. The number 2000 the number of titles that are held by over 100 institutions.</p>
+					<p class="mt-1 mb-1 ml-2">The 1000 list is everything, including annual reports etc, the number 1000 is arbitrary.</p>
+				</details>	
+				<details>
+					<summary>What's the deal with these book covers?</summary>
+					<p class="mt-1 mb-1 ml-2">I used a popular generative machine learning API to produce book covers for these titles. I wanted to make browsing the page more visual and I think it is a rare example where generative image generation is a valid use case. The images are not always very good or make any sense contextually but if you like them you can download them with or without the text overlay, CC0 license with metadata <a href="https://thisismattmiller.s3.amazonaws.com/hathi_2024_public_domain_covers.zip">in this zip file (6GB)</a>.</p>
+				</details>				
+				</div>
+				<hr>
+
+
+
+
+				<div class="columns">
+					<div class="column is-4">
+						
+						<button @click="switchLists('2kLit')" :class="['button', 'is-large', 'is-light', 'is-fullwidth', 'is-rounded', {'button-not-active': (activeList=='1kAll'), 'is-focused': (activeList=='2kLit'),'is-active': (activeList=='2kLit'), 'is-success': (activeList=='2kLit')  }]">View Top 2000 Literature Titles</button>
+					</div>
+					<div class="column is-4">
+						
+
+						<button @click="switchLists('1kAll')" :class="['button', 'is-large', 'is-light', 'is-fullwidth', 'is-rounded', {'button-not-active': (activeList=='2kLit'), 'is-focused': (activeList=='1kAll'),'is-active': (activeList=='1kAll'), 'is-success': (activeList=='1kAll')  }]">View Top 1000 All Titles</button>
+
+					</div>
+					<div class="column is-4">
+						
+
+						<a style="text-decoration:none" href="explore.html" target="_blank" class="button is-large is-light is-fullwidth is-rounded button-not-active lcc-link">Explore all 66K by LCC Hierarchy</a>
+
+					</div>
+
+
+
+				</div>
+
+
+				<div>
+					<div v-if="titles.length>0" class="meta-label" style="font-weight: bold;">Filter:</div>
+					<template v-if="!activeFacet">
+						<ul class="facet-list">
+							<li v-for="f, key in facets"><a href="#" @click="facet($event,key)" class="facet-link">{{key}} ({{f}})</a></li>
+						</ul>
+						<details v-if="Object.keys(facetsMore).length>0">
+							<summary>More Filters</summary>
+							<ul class="facet-list">
+								<li v-for="f, key in facetsMore"><a href="#" @click="facet($event,key)" class="facet-link">{{key}} ({{f}})</a></li>
+							</ul>
+						</details>
+					</template>
+					<template v-else>
+						<button class="button is-fullwidth is-rounded" @click="facet($event,false)">Remove Filter on {{activeFacet}}</button>
+					</template>
+
+				</div>
+				<hr>
+			  	<div v-for="t in titles" class="title-container">
+			  		<div class="columns">
+					  <div class="column is-3 bookcover-container">
+  				  		<img loading="lazy" style="height:250px; width: 250px;" height="250" width="250" :src="'bookcovers/images/' + t.main_bib_id + '.jpg'"   >
+
+					  </div>
+					  <div class="column is-9">
+					  	<div class="is-size-3"><a target="_blank" style="text-decoration: none;" :href="'https://catalog.hathitrust.org/Record/'+t.main_bib_id">{{t.title}}</a></div>
+					  	<div class="is-size-4 meta-author">{{t.author}}</div>
+
+					  	<div class="columns">
+					  		<div class="column is-4">
+					  			<div>
+					  				<span class="meta-label">Hathi:</span><a target="_blank" :href="'https://catalog.hathitrust.org/Record/'+t.main_bib_id">{{t.main_bib_id}}</a>
+					  			</div>
+					  			<div>
+					  				<span class="meta-label">Worldcat:</span><a target="_blank" class="meta-link" v-for="o in t.oclc" :href="'https://worldcat.org/oclc/'+o">{{o}}</a>
+					  			</div>
+					  			<div v-if="t.lccn && t.lccn.length>0">
+					  				<span class="meta-label">LCCN:</span><a target="_blank" class="meta-link" v-for="l in t.lccn" :href="'https://id.loc.gov/search/?q='+l">{{l}}</a>
+					  			</div>
+					  			<div v-if="t.issn && t.issn.length>0">
+					  				<span class="meta-label">ISSN:</span><span class="meta-link" v-for="l in t.issn.filter((value, index, array) => array.indexOf(value) === index)">{{l}}</a>
+					  			</div>
+					  			<div class="is-size-7 mt-1" v-if="t.imprint">
+					  				{{t.imprint}}
+					  			</div>
+
+
+					  		</div>
+					  		<div class="column is-3">
+					  			<div v-if="t.lang">
+					  				<span class="meta-label">Language:</span>
+					  				<span v-for="l,idx in t.lang">				  					
+					  					<a target="_blank" class="mr-1" v-for="ht in l" :href="'https://catalog.hathitrust.org/Record/'+ht">{{idx.toUpperCase().replace("|||","ENG")}}</a>
+					  				</span>
+					  			</div>
+					  			<div v-if="t.description && Object.keys(t.description).length>0">
+					  				<span class="meta-label">Vols:</span>
+					  				<ul>
+					  					<li class="ml-3" v-for="l,idx in t.description">
+					  						<a target="_blank" class="mr-1" :href="'https://catalog.hathitrust.org/Record/'+l">{{idx}}</a>
+					  					</li>
+					  				</ul>
+					  			</div>
+
+					  		</div>
+
+					  		<div class="column is-5">
+					  			<div>{{t.subject}}</div>
+
+					  			<div v-for="s in t.subjects">{{s}}</div>
+
+					  		</div>
+
+
+					  	</div>
+
+
+
+					  </div>
+					</div>
+
+			  	</div>
+				
+
+			</div>
+
+
+
+
+
+		</div>
+
+		<script type="module">
+		  import { createApp } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js'
+		  
+
+		  createApp({
+		    data() {
+		      return {
+
+		      	titles:[],
+		      	facets:{},
+		      	activeFacet: false,	
+		      	facetsMore:{},		      	
+				activeList: '2kLit'
+		      }
+		    },
+		    async mounted(){
+
+		    	let r = await fetch('./combined_lists.json')
+		    	window.data = await r.json()
+
+		    	this.titles = window.data['titles'].filter((t)=>{ if (t.lists.indexOf(this.activeList) > -1) { return true} })
+		    	this.facets = window.data.top2000LitSubjects
+
+		    },
+		    methods:{
+
+		    	facet(event,subject){
+		    		
+		    		event.preventDefault()
+
+		    		if (subject === false){
+			    		this.titles = window.data['titles'].filter((t)=>{ if (t.lists.indexOf(this.activeList) > -1) { return true} })
+		    			this.activeFacet=false
+		    			return false
+		    		}
+
+
+		    		this.titles = window.data['titles'].filter((t)=>{ if (t.lists.indexOf(this.activeList) > -1 && t.subject == subject) { return true} })
+
+		    		this.activeFacet=subject
+		    		return false
+		    	},
+
+		    	switchLists(list){
+
+		    		this.titles = []
+		    		this.facets = {}
+		    		this.facetsMore={}
+		    		window.setTimeout(()=>{
+			    		this.activeList = list
+			    		this.titles = window.data['titles'].filter((t)=>{ if (t.lists.indexOf(this.activeList) > -1) { return true} })
+
+			    		console.log(this.titles.length)
+			    		if (list == '1kAll'){
+
+			    			for (let k in window.data.top1000AllSubjects){
+			    				console.log(k,Object.keys(this.facets).length)
+			    				if (Object.keys(this.facets).length <= 50){
+			    					this.facets[k] = window.data.top1000AllSubjects[k]
+			    					console.log(this.facets)
+			    				}else{
+			    					this.facetsMore[k] = window.data.top1000AllSubjects[k]
+
+			    				}
+			    			}
+
+
+
+
+
+			    		}else{
+			    			this.facets = window.data.top2000LitSubjects
+
+			    		}
+		    		},500)
+
+
+		    	}
+
+		    }
+
+		  }).mount('#app')
+		</script>
+
+
+
+
+
+
+
+	</body>
+
+
+
+
+
+</html>
